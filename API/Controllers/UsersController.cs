@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
-    [Authorize]
+    // [Authorize]
     public class UsersController : BaseApiController
     {
         private readonly IUserRepository _userRepository ;

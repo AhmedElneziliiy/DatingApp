@@ -18,11 +18,12 @@ const routes: Routes = [
     canActivate:[AuthGuard],
     children:[
       {path:'members',component:MemberListComponent,canActivate:[AuthGuard]},
-      {path:'members/:id',component:MemberDetailsComponent},
+      {path:'members/:username',component:MemberDetailsComponent},
       {path:'lists',component:ListsComponent},
       {path:'messages',component:MessagesComponent}
     ]
   },
+
   {path:'server-error',component:ServerErrorComponent},
   {path:'not-found',component:NotFoundComponent},
   {path:'errors',component:TestErrorsComponent},
