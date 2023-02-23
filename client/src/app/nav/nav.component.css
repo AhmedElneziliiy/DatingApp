@@ -2,3 +2,9 @@
   cursor: pointer;
   color: wheat  ;
 }
+
+img {
+  max-height: 50px;
+  border: 2px solid whitesmoke;
+  display: inline;
+}
