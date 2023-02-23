@@ -10,7 +10,12 @@ export class MemberCardComponent implements OnInit {
 
   @Input() member: Member | undefined;
 
+  getUserName(user:any){
+    console.log(user);
+  }
+
   constructor() { }
+
   ngOnInit(): void {
   }
 
