@@ -6,18 +6,11 @@ namespace API.Extensions
 {
     public static class HttpExtensions
     {
-        public static void AddPagintaionHeader(this HttpResponse response,int currentPage,
-        int itemsPerPage,int totalItems,int totalPages)
+        public static void AddPaginationHeader(this HttpResponse response, PaginationHeader header)
         {
-            var pagintaionHeader=new PaginationHeader(currentPage,itemsPerPage,totalItems,totalPages);
-
-            var options= new JsonSerializerOptions
-            {
-                PropertyNamingPolicy=JsonNamingPolicy.CamelCase
-            };
-            //add pagination to response header(custom header)
-            response.Headers.Add("Pagintaion",JsonSerializer.Serialize(pagintaionHeader,options));
-            response.Headers.Add("Access-Control-Expose-Headers","Pagination");
+            var jsonOptions = new JsonSerializerOptions{PropertyNamingPolicy = JsonNamingPolicy.CamelCase};
+            response.Headers.Add("Pagination", JsonSerializer.Serialize(header, jsonOptions));
+            response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
         }
     }
 }

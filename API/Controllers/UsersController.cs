@@ -34,12 +34,11 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
+        public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
         {
             var users = await _userRepository.GetMembersAsync(userParams);
-            Response.AddPagintaionHeader(users.CurrentPage,users.PageSize,
-            users.TotalCount,users.TotalPages);
-
+            Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, 
+                users.TotalCount, users.TotalPages));
             return Ok(users);
         }
 
