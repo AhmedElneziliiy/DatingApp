@@ -11,7 +11,7 @@ namespace API.Controllers
 {
     public class BuggyController:BaseApiController
     {
-        private readonly DataContext _context;
+       private readonly DataContext _context;
         public BuggyController(DataContext context)
         {
             _context = context;
@@ -31,7 +31,7 @@ namespace API.Controllers
 
             if (thing == null) return NotFound();
 
-            return thing;
+            return Ok(thing);
         }
 
         [HttpGet("server-error")]
@@ -47,8 +47,7 @@ namespace API.Controllers
         [HttpGet("bad-request")]
         public ActionResult<string> GetBadRequest()
         {
-            return BadRequest("This was not a good request");
+            return BadRequest();
         }
     }
 }
-

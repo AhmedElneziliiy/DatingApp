@@ -27,21 +27,19 @@ namespace API.Middleware
             {
                 await _next(context);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger.LogError(ex,ex.Message);
-                context.Response.ContentType="application/json";
-                context.Response.StatusCode=(int) HttpStatusCode.InternalServerError;//500
+                _logger.LogError(ex, ex.Message);
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
 
                 var response = _env.IsDevelopment()
-                    ?new ApiException (context.Response.StatusCode,ex.Message,ex.StackTrace?.ToString())
-                    :new ApiException (context.Response.StatusCode,"Internal Server Error");
-                
-                
-                //rfeturn response in json and in camelCase
-                var options=new JsonSerializerOptions{PropertyNamingPolicy=JsonNamingPolicy.CamelCase};
-                
-                var json=JsonSerializer.Serialize(response,options);
+                    ? new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace?.ToString())
+                    : new ApiException(context.Response.StatusCode, "Internal Server Error");
+
+                var options = new JsonSerializerOptions{PropertyNamingPolicy = JsonNamingPolicy.CamelCase};
+
+                var json = JsonSerializer.Serialize(response, options);
 
                 await context.Response.WriteAsync(json);
             }
