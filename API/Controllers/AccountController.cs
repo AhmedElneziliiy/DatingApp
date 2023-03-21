@@ -33,11 +33,11 @@ namespace API.Controllers
         [HttpPost("register")] // POST: api/account/register?username=dave&password=pwd
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            if (await UserExists(registerDto.UserName)) return BadRequest("Username is taken");
+            if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
 
             var user = _mapper.Map<AppUser>(registerDto);
 
-            user.UserName = registerDto.UserName.ToLower();
+            user.UserName = registerDto.Username.ToLower();
 
             
             var result = await _userManager.CreateAsync(user,registerDto.Password);
@@ -53,7 +53,7 @@ namespace API.Controllers
 
             return new UserDto
             {
-                UserName = user.UserName,
+                Username = user.UserName,
                 Token = await _tokenService.CreateToken(user),
                 KnownAs = user.KnownAs,
                 Gender=user.Gender
@@ -65,7 +65,7 @@ namespace API.Controllers
         {
             var user = await _userManager.Users
                 .Include(p => p.Photos)
-                .SingleOrDefaultAsync(x => x.UserName == loginDto.UserName.ToLower());
+                .SingleOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
 
             if (user == null) return Unauthorized("invalid username");
 
@@ -75,7 +75,7 @@ namespace API.Controllers
             if(!result.Succeeded) return Unauthorized();
             return new UserDto
             {
-                UserName = user.UserName,
+                Username = user.UserName,
                 Token = await _tokenService.CreateToken(user),
                 PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
                 KnownAs = user.KnownAs,
