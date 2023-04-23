@@ -7,7 +7,7 @@ namespace API.Entities
 {
     public class Connection
     {
-         public Connection()
+        public Connection()
         {
 
         }

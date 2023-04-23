@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
 using API.Helpers;
@@ -69,24 +65,27 @@ namespace API.Data
         //getting unread messages for user
         public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
         {
-            var query = _context.Messages.OrderByDescending(m=>m.MessageSent).AsQueryable();
+            var query = _context.Messages
+            .OrderByDescending(m=>m.MessageSent)
+            .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
+            .AsQueryable();
             
             query = messageParams.Container switch{
 
-                "Inbox"=>query.Where(u=>u.Recipient.UserName==messageParams.Username
+                "Inbox"=>query.Where(u=>u.RecipientUsername==messageParams.Username
                          && u.RecipientDeleted ==false),
 
-                "Outbox"=>query.Where(u=>u.Sender.UserName==messageParams.Username 
+                "Outbox"=>query.Where(u=>u.SenderUsername==messageParams.Username 
                         && u.SenderDeleted==false),
 
-                _ => query.Where(u=>u.Recipient.UserName==messageParams.Username 
+                _ => query.Where(u=>u.RecipientUsername==messageParams.Username 
                                 && u.RecipientDeleted==false && u.DateRead == null )
             };
 
-            var messages = query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
+            //var messages = query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
 
             return await PagedList<MessageDto>
-                    .CreateAsync(messages,messageParams.PageNumber,messageParams.PageSize);    
+                    .CreateAsync(query,messageParams.PageNumber,messageParams.PageSize);    
         }
 
         //get chat between two members
@@ -94,8 +93,8 @@ namespace API.Data
         {
             //get conversation for both users
              var messages = await _context.Messages
-                .Include(u => u.Sender).ThenInclude(p => p.Photos)
-                .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+             // .Include(u => u.Sender).ThenInclude(p => p.Photos)  we do not need them now cause we use ProjectTo()
+            //.Include(u => u.Recipient).ThenInclude(p => p.Photos)
                 .Where(
                    m => m.RecipientUsername == currentUserName && m.RecipientDeleted == false &&
                     m.SenderUsername == recipientUserName ||
@@ -103,6 +102,7 @@ namespace API.Data
                     m.SenderUsername == currentUserName 
                 )
                 .OrderBy(m => m.MessageSent)
+                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
             var unreadMessages = messages.Where(m => m.DateRead == null 
@@ -115,15 +115,14 @@ namespace API.Data
                     message.DateRead = DateTime.UtcNow;
                 }
 
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();  
+                //we will do that step in the hup and remove the end point from the controller
             }
 
-            return _mapper.Map<IEnumerable<MessageDto>>(messages);
+            //return _mapper.Map<IEnumerable<MessageDto>>(messages); 
+            //that return all data for users i need not that so we used project to 
+            return messages;
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync()>0;
-        }
     }
 }

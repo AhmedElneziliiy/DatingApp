@@ -28,6 +28,7 @@ export class AccountService {
       })
     )
   }
+  
   register(model: any) {
     return this.http.post<User>(this.baseUrl + 'account/register', model).pipe(
       map(user => {
@@ -37,6 +38,7 @@ export class AccountService {
       })
     )
   }
+
   setCurrentUser(user: User) {
     user.roles = [];
     const roles = this.getDecodedToken(user.token).role;

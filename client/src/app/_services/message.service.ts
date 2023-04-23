@@ -4,7 +4,6 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { environment } from 'environments/environment';
 import { BehaviorSubject, take } from 'rxjs';
 import { Group } from '../_models/group';
-
 import { Message } from '../_models/message';
 import { User } from '../_models/user';
 import { getPaginatedResult, getPaginationHeaders } from './paginationHelpers';
@@ -23,7 +22,7 @@ export class MessageService {
   //
 
 
-  
+
   createHubConnection(user: User, otherUsername: string) {
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl + 'message?user=' + otherUsername, {
@@ -76,6 +75,7 @@ export class MessageService {
     params = params.append('Container', container);
     return getPaginatedResult<Message[]>(this.baseUrl + 'messages', params, this.http);
   }
+  
   getMessageThread(username: string) {
     return this.http.get<Message[]>(this.baseUrl + 'messages/thread/' + username);
   }

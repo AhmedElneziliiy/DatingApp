@@ -1,10 +1,4 @@
-using System.Text;
-using System.Security.Cryptography;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using API.Data;
+
 using API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using API.DTOs;
@@ -34,7 +28,7 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
             if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
-
+//--
             var user = _mapper.Map<AppUser>(registerDto);
 
             user.UserName = registerDto.Username.ToLower();
